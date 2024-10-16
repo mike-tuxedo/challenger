@@ -15,11 +15,15 @@
         TooltipContent,
         TooltipTrigger,
     } from "$lib/components/ui/tooltip";
+    import { Dialog, DialogContent } from "$lib/components/ui/dialog";
     import {
-        Dialog,
-        DialogContent,
-    } from "$lib/components/ui/dialog";
-    import { Drawer, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle, DrawerTrigger } from "$lib/components/ui/drawer";
+        Drawer,
+        DrawerContent,
+        DrawerDescription,
+        DrawerHeader,
+        DrawerTitle,
+        DrawerTrigger,
+    } from "$lib/components/ui/drawer";
     import { appstate } from "$lib/store";
 
     import ChallengeDashboard from "$lib/components/dashboard.svelte";
@@ -38,19 +42,8 @@
 </script>
 
 <div class="flex flex-col h-screen">
-    <header class="bg-background border-b p-4">
-        <div class="flex justify-between items-center">
-            <h1 class="text-1xl font-bold">
-                {#if $appstate.activeView === "dashboard" || $appstate.activeView === "challenge"}
-                    Dashboard
-                {:else if $appstate.activeView === "challenges"}
-                    Challenges
-                {:else if $appstate.activeView === "add"}
-                    Challenge editor
-                {:else if $appstate.activeView === "user"}
-                    User
-                {/if}
-            </h1>
+    <header class="absolute z-10 p-4 right-0">
+        <div class="flex justify-end">
             <div class="flex items-center space-x-2">
                 <Tooltip>
                     <TooltipTrigger>
@@ -80,78 +73,86 @@
         </div>
     </header>
 
-    <main class="relative flex-grow overflow-hidden p-4">
+    <main class="grid overflow-hidden" style="min-height: calc(100vh - 57px)">
         <!-- Content will be injected here based on the active tab -->
         {#if $appstate.activeView === "dashboard" || $appstate.activeView === "challenge"}
             <div
-                class="absolute top-0 left-0 h-full w-full overflow-auto p-4"
+                class="h-full w-full overflow-auto p-6"
+                style="grid-area: 1/1"
                 transition:scale|global={{ duration: 250, start: 0.9 }}
             >
                 <ChallengeDashboard />
             </div>
         {:else if $appstate.activeView === "challenges"}
             <div
-                class="absolute top-0 left-0 h-full w-full overflow-auto p-4"
+                class="h-full w-full overflow-auto p-6"
+                style="grid-area: 1/1"
                 transition:scale|global={{ duration: 250, start: 0.9 }}
             >
                 <ChallengesOverview />
             </div>
         {:else if $appstate.activeView === "add"}
             <div
-                class="absolute top-0 left-0 h-full w-full overflow-auto p-4"
+                class="grid h-full w-full overflow-auto p-6"
+                style="grid-area: 1/1"
                 transition:scale|global={{ duration: 250, start: 0.9 }}
             >
                 <ChallengeEditor />
             </div>
         {:else if $appstate.activeView === "user"}
             <div
-                class="absolute top-0 left-0 h-full w-full overflow-auto p-4"
+                class="h-full w-full overflow-auto p-6"
+                style="grid-area: 1/1"
                 transition:scale|global={{ duration: 250, start: 0.9 }}
             >
                 <ChallengeUserpage />
             </div>
         {/if}
 
-        <Dialog open={$appstate.activeView === 'challenge'}>
+        <Dialog open={$appstate.activeView === "challenge"}>
             <DialogContent class="max-w-full h-screen flex flex-col">
                 <Challenge />
             </DialogContent>
         </Dialog>
     </main>
 
-    <nav class="bg-background border-t">
+    <nav class="">
         <div class="flex justify-around">
             <Button
-                variant={$appstate.activeView === "dashboard"
-                    ? "default"
-                    : "ghost"}
-                class="flex-1 rounded-none h-14 flex flex-col items-center"
+                class="flex-1 rounded-none h-14 flex flex-col items-center bg-background hover:bg-background {$appstate.activeView ===
+                'dashboard'
+                    ? 'text-accent'
+                    : 'text-primary'}"
                 onclick={() => ($appstate.activeView = "dashboard")}
             >
                 <Layout class="h-6 w-6 mb-1 min-w-[24px] min-h-[24px]" />
                 <span class="text-xs">Dashboard</span>
             </Button>
             <Button
-                variant={$appstate.activeView === "challenges"
-                    ? "default"
-                    : "ghost"}
-                class="flex-1 rounded-none h-14 flex flex-col items-center"
+                class="flex-1 rounded-none h-14 flex flex-col items-center bg-background hover:bg-background {$appstate.activeView ===
+                'challenges'
+                    ? 'text-accent'
+                    : 'text-primary'}"
                 onclick={() => ($appstate.activeView = "challenges")}
             >
                 <Dumbbell class="h-6 w-6 mb-1 min-w-[24px] min-h-[24px]" />
                 <span class="text-xs">Challenges</span>
             </Button>
             <Button
-                variant={$appstate.activeView === "add" ? "default" : "ghost"}
-                class="flex-1 rounded-none h-14 flex flex-col items-center"
+                class="flex-1 rounded-none h-14 flex flex-col items-center bg-background bg-background hover:bg-background {$appstate.activeView ===
+                'add'
+                    ? 'text-accent'
+                    : 'text-primary'}"
                 onclick={() => ($appstate.activeView = "add")}
             >
                 <Plus class="h-6 w-6 mb-1 min-w-[24px] min-h-[24px]" />
                 <span class="text-xs">Add</span>
             </Button>
             <Button
-                variant={$appstate.activeView === "user" ? "default" : "ghost"}
-                class="flex-1 rounded-none h-14 flex flex-col items-center"
+                class="flex-1 rounded-none h-14 flex flex-col items-center bg-background hover:bg-background {$appstate.activeView ===
+                'user'
+                    ? 'text-accent'
+                    : 'text-primary'}"
                 onclick={() => ($appstate.activeView = "user")}
             >
                 <Settings class="h-6 w-6 mb-1 min-w-[24px] min-h-[24px]" />

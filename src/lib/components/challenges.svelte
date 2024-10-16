@@ -46,6 +46,7 @@
     let copiedChallenge = null;
     let favorites = [];
     let activeChallenges = [];
+    let deletePopupOpen = $state(false);
     let filterOption = $state("all");
     let challenges = $state([]);
     getChallenges();
@@ -61,6 +62,7 @@
 
     async function copyChallenge(challenge, modify=false) {
         copiedChallenge = $state.snapshot(challenge);
+        console.log('delete ',copiedChallenge.id);
         copiedChallenge.name += " (Copy)";
         copiedChallenge.isPublic = false;
         delete copiedChallenge.id;
@@ -72,7 +74,6 @@
             copiedChallenge.id = id;
             $appstate.editingChallenge = copiedChallenge;
         }
-        
     }
 
     function editChallenge(challenge) {
@@ -87,6 +88,7 @@
             db.activeChallenges.delete(challenge.id);
         }
         getChallenges();
+        deletePopupOpen = false;
     }
 
     function toggleFavorite(challenge) {
@@ -132,6 +134,10 @@
         if (filterOption === "own") return !challenge.public;
         if (filterOption === "others") return challenge.public;
     }));
+
+    $effect(() => {
+        console.log($state.snapshot(filteredChallenges));
+    })
 </script>
 
 <h1 class="text-3xl font-bold mb-6">Search Challenges</h1>
@@ -168,7 +174,7 @@
             </CardContent>
             <CardFooter class="flex justify-between">
                 <div class="flex space-x-2">
-                    <Dialog>
+                    <Dialog bind:open={deletePopupOpen}>
                         <DialogTrigger>
                             <Button variant="outline">
                                 <Trash class="h-4 w-4"/>
@@ -176,7 +182,7 @@
                         </DialogTrigger>
                         <DialogContent>
                             <DialogHeader>
-                                <DialogTitle>{challenge.name}</DialogTitle>
+                                <DialogTitle>{challenge.name} {challenge.id}</DialogTitle>
                                 <DialogDescription
                                     >Delete {challenge.name} Challenge</DialogDescription
                                 >

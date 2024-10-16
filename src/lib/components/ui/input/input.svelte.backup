@@ -31,5 +31,6 @@
 	onmousemove={bubble('mousemove')}
 	onpaste={bubble('paste')}
 	oninput={bubble('input')}
+	use:passive={['wheel', () => bubble('wheel')]}
 	{...rest}
 />
