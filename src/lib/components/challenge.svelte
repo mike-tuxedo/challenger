@@ -20,7 +20,9 @@
     // Mock data for the currentChallenge
     let isPaused = false;
     let breakTimer = $state(0);
+    let intervalTimer = $state(0);
     let breakInterval;
+    let exerciseInterval;
 
     let currentChallenge = liveQuery(() =>
         db.activeChallenges.get($appstate.currentChallengeId)
@@ -54,12 +56,15 @@
         completedSets[exerciseIndex][setIndex] =
             !completedSets[exerciseIndex][setIndex];
 
-        console.log(completedSets);
         if (
             completedSets[exerciseIndex][setIndex] &&
             !isLastSet(exerciseIndex, setIndex)
         ) {
-            startBreakTimer(exercisesOfTheDay[exerciseIndex].pauseTime);
+            if (exercisesOfTheDay[exerciseIndex].repsOrTime === 'reps') {
+                startBreakTimer(exercisesOfTheDay[exerciseIndex].pauseTime);
+            } else {
+                startIntervalTimer(exercisesOfTheDay[exerciseIndex].repsOrTimeValue, exercisesOfTheDay[exerciseIndex].pauseTime);
+            }
         } else {
             stopBreakTimer();
         }
@@ -88,9 +93,12 @@
         breakTimer = 0;
     }
 
+    function stopIntervalTimer() {
+        clearInterval(exerciseInterval);
+        intervalTimer = 0;
+    }
+    
     function startBreakTimer(duration) {
-        console.log("start break timer");
-
         breakTimer = duration;
         clearInterval(breakInterval);
         breakInterval = setInterval(() => {
@@ -101,6 +109,22 @@
                 }
             } else if (breakTimer === 0) {
                 clearInterval(breakInterval);
+            }
+        }, 1000);
+    }
+
+    function startIntervalTimer(intervalDuration, pauseDuration) {
+        intervalTimer = intervalDuration;
+        clearInterval(exerciseInterval);
+        exerciseInterval = setInterval(() => {
+            if (intervalTimer > 0 && !isPaused) {
+                intervalTimer--;
+                if (intervalTimer === 0) {
+                    playBreakSound();
+                    startBreakTimer(pauseDuration);
+                }
+            } else if (intervalTimer === 0) {
+                clearInterval(exerciseInterval);
             }
         }, 1000);
     }
@@ -199,7 +223,7 @@
             {#if breakTimer > 0}
                 <div
                     transition:fly={{ y: 100 }}
-                    class="fixed w-full h-full left-0 top-0 mb-4 place-content-center bg-white"
+                    class="bg-card fixed w-full h-full left-0 top-0 mb-4 place-content-center"
                 >
                     <CardContent class="text-center py-4">
                         <CardContent class="text-center py-4 text-4xl">
@@ -211,6 +235,27 @@
                                 onclick={stopBreakTimer}
                             >
                                 <Check class="mr-2 h-4 w-4" /> Pause beenden
+                            </Button>
+                        </CardContent>
+                    </CardContent>
+                </div>
+            {/if}
+
+            {#if intervalTimer > 0}
+                <div
+                    transition:fly={{ y: 100 }}
+                    class="bg-card fixed w-full h-full left-0 top-0 mb-4 place-content-center"
+                >
+                    <CardContent class="text-center py-4">
+                        <CardContent class="text-center py-4 text-4xl">
+                            <h3 class=" font-bold mb-4">Interval Zeit</h3>
+                            <p class="">{intervalTimer}s</p>
+                            <Button
+                                class="mt-8 scale-150"
+                                size="lg"
+                                onclick={stopIntervalTimer}
+                            >
+                                <Check class="mr-2 h-4 w-4" /> Interval abbrechen
                             </Button>
                         </CardContent>
                     </CardContent>

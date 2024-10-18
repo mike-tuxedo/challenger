@@ -1,6 +1,4 @@
 <script>
-    import { run } from 'svelte/legacy';
-
     import { Button } from "$lib/components/ui/button";
     import {
         Card,
@@ -62,7 +60,6 @@
 
     async function copyChallenge(challenge, modify=false) {
         copiedChallenge = $state.snapshot(challenge);
-        console.log('delete ',copiedChallenge.id);
         copiedChallenge.name += " (Copy)";
         copiedChallenge.isPublic = false;
         delete copiedChallenge.id;
@@ -85,15 +82,17 @@
         await db.challenges.delete(challenge.id);
 
         if (deleteActiveChallenge) {
-            db.activeChallenges.delete(challenge.id);
+            const activeChallenge = await db.activeChallenges.get({originId: challenge.id});
+
+            if (activeChallenge) {
+                db.activeChallenges.delete(activeChallenge.id);
+            }
         }
         getChallenges();
         deletePopupOpen = false;
     }
 
     function toggleFavorite(challenge) {
-        console.log($state.snapshot(challenge));
-        console.log($state.snapshot(favorites));
         if (favorites.some((fav) => fav.id === challenge.id)) {
             favorites = favorites.filter((fav) => fav.id !== challenge.id);
         } else {
@@ -103,21 +102,22 @@
 
     async function startChallenge(challenge) {
         const currentChallenge = $state.snapshot(challenge);
-        const isInActiveChallenges = await db.activeChallenges.get(currentChallenge.id);
+        let activeChallenge = await db.activeChallenges.get({originId: currentChallenge.id});
 
-        if (!isInActiveChallenges) {
-            if (!currentChallenge.currentDay) {
-                currentChallenge.currentDay = 1;
-            }
-
-            await db.activeChallenges.put(currentChallenge);
+        if (!activeChallenge) {
+            currentChallenge.currentDay = 1;
+            currentChallenge.originId = currentChallenge.id;
+            currentChallenge.user = $appstate.useId;
+            delete currentChallenge.id;
+            const activeId = await db.activeChallenges.put(currentChallenge);
+            activeChallenge = await db.activeChallenges.get(activeId);
 
             if (!favorites.some((fav) => fav.id === challenge.id)) {
                 await db.favoriteChallenges.add({ challengeId: challenge.id });
             }
         }
 
-        $appstate.currentChallengeId = challenge.id;
+        $appstate.currentChallengeId = activeChallenge.id;
         $appstate.activeView = 'challenge';
     }
 
@@ -126,7 +126,7 @@
     }
         
     function isStarted(challenge) {
-        return activeChallenges.some((started) => started.id === challenge.id);
+        return activeChallenges.some((started) => started.originId === challenge.id);
     }
 
     let filteredChallenges = $derived(challenges.filter((challenge) => {

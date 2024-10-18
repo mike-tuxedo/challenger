@@ -82,7 +82,15 @@
     async function saveChallenge() {
         const currentChallenge = $state.snapshot(challenge);
         const id = await db.challenges.put(currentChallenge);
-        await db.activeChallenges.update(id, { ...currentChallenge });
+        delete currentChallenge.id;
+
+        let activeChallenge = await db.activeChallenges.get({originId: id});
+        if (activeChallenge) {
+            await db.activeChallenges.update(activeChallenge.id, { ...currentChallenge });
+        } else {
+            await db.activeChallenges.add({ ...currentChallenge, originId: id, user: $appstate.userId });
+        }
+        
         selectedType = null;
         $appstate.editingChallenge = null;
         $appstate.activeView = "challenges";
