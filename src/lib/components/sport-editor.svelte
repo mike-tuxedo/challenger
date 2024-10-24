@@ -3,13 +3,6 @@
     import { Input } from "$lib/components/ui/input";
     import { Label } from "$lib/components/ui/label";
     import {
-        Card,
-        CardContent,
-        CardFooter,
-        CardHeader,
-        CardTitle,
-    } from "$lib/components/ui/card";
-    import {
         Table,
         TableBody,
         TableCell,
@@ -27,11 +20,10 @@
         ArrowRight,
     } from "lucide-svelte";
     import { RadioGroup, RadioGroupItem } from "$lib/components/ui/radio-group";
-    import { Switch } from "$lib/components/ui/switch";
     import NumbersInput from "$lib/components/ui/NumbersInput.svelte";
     import { Slider } from "$lib/components/ui/slider";
-    import { Separator } from "$lib/components/ui/separator";
     import { Textarea } from "$lib/components/ui/textarea";
+    import SportEditorDays from "$lib/components/sport-editor-days.svelte";
     import { db } from "$lib/db";
     import { appstate } from "$lib/store.js";
     import { fly, scale } from "svelte/transition";
@@ -84,13 +76,19 @@
         const id = await db.challenges.put(currentChallenge);
         delete currentChallenge.id;
 
-        let activeChallenge = await db.activeChallenges.get({originId: id});
+        let activeChallenge = await db.activeChallenges.get({ originId: id });
         if (activeChallenge) {
-            await db.activeChallenges.update(activeChallenge.id, { ...currentChallenge });
+            await db.activeChallenges.update(activeChallenge.id, {
+                ...currentChallenge,
+            });
         } else {
-            await db.activeChallenges.add({ ...currentChallenge, originId: id, user: $appstate.userId });
+            await db.activeChallenges.add({
+                ...currentChallenge,
+                originId: id,
+                user: $appstate.userId,
+            });
         }
-        
+
         selectedType = null;
         $appstate.editingChallenge = null;
         $appstate.activeView = "challenges";
@@ -150,48 +148,24 @@
         editingIndex = null;
     }
 
-    function handlePublish() {
-        // Handle publish logic here
-        console.log("Published with difficulty:", challenge.difficulty);
-    }
-
-    function handleDragOver(e, index) {
-        e.preventDefault();
-        const rect = e.currentTarget.getBoundingClientRect();
-        const midpoint = rect.top + rect.height / 2;
-        dropIndicatorIndex = e.clientY < midpoint ? index : index + 1;
-    }
-
-    function handleDragLeave() {
-        dropIndicatorIndex = null;
-    }
-
-    function handleDrop(e) {
-        e.preventDefault();
-        const sourceIndex = Number(e.dataTransfer?.getData("text/plain"));
-        if (dropIndicatorIndex !== null && sourceIndex !== dropIndicatorIndex) {
-            const newExercises = [...challenge.exercises];
-            const [removed] = newExercises.splice(sourceIndex, 1);
-            const targetIndex =
-                dropIndicatorIndex > sourceIndex
-                    ? dropIndicatorIndex - 1
-                    : dropIndicatorIndex;
-            newExercises.splice(targetIndex, 0, removed);
-            challenge.exercises = newExercises;
-        }
-        draggedIndex = null;
-        dropIndicatorIndex = null;
-    }
-
     function showExerciseEditor() {
+        exercisesEditor = true;
+    }
+
+    let showNewVersion = false;
+    function showExerciseEditorNew() {
+        showNewVersion = true;
         exercisesEditor = true;
     }
 </script>
 
 {#if !exercisesEditor}
-    <div style="grid-area: 1/1; max-width: calc(100vw - 3rem)" transition:scale|global={{ duration: 250, start: 0.9 }}>
+    <div
+        style="grid-area: 1/1; max-width: calc(100vw - 3rem)"
+        transition:scale|global={{ duration: 250, start: 0.9 }}
+    >
         <h1 class="text-3xl font-bold mb-6">Create your challenge</h1>
-        
+
         <div class="self-stretch">
             <Input
                 type="text"
@@ -250,11 +224,52 @@
                 Next
                 <ArrowRight />
             </Button>
+            <Button
+                variant="default"
+                class="mb-4"
+                onclick={showExerciseEditorNew}
+            >
+                Next New Verion
+                <ArrowRight />
+            </Button>
         </div>
     </div>
     <!-- <Separator class="my-4" /> -->
+{:else if showNewVersion}
+    <div
+        style="grid-area: 1/1; max-width: calc(100vw - 3rem)"
+        transition:fly|global={{ x: 100 }}
+    >
+        <h1 class="text-3xl font-bold mb-4">Add Exercises</h1>
+        <SportEditorDays />
+        <Button
+            variant="ghost"
+            class="justify-start"
+            onclick={() => { exercisesEditor = false; showNewVersion = false; }}
+        >
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="mr-2"
+            >
+                <path d="m12 19-7-7 7-7" />
+                <path d="M19 12H5" />
+            </svg>
+            Back
+        </Button>
+    </div>
 {:else}
-    <div style="grid-area: 1/1; max-width: calc(100vw - 3rem)" transition:fly|global={{ x: 100 }}>
+    <div
+        style="grid-area: 1/1; max-width: calc(100vw - 3rem)"
+        transition:fly|global={{ x: 100 }}
+    >
         <h1 class="text-3xl font-bold mb-4">Add Exercises</h1>
         <div class="space-y-4 mb-4">
             <div>
