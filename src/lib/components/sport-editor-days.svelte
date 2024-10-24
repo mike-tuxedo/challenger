@@ -14,8 +14,9 @@
         DrawerFooter,
     } from "$lib/components/ui/drawer";
     import { Plus, Copy, GripVertical, Trash2, Pencil } from "lucide-svelte";
-    import { dndzone } from "svelte-dnd-action";
-
+    import { dndzone, dragHandle, dragHandleZone } from "svelte-dnd-action";
+	import {flip} from "svelte/animate";
+	
 	let initialExercise = {
         name: "",
         modus: "reps",
@@ -124,17 +125,20 @@
             days[dayIndex].exercises = newExercises;
         }
     }
+
+    // use:dndzone={{ items: days, type: "days", dragDisabled }}
+	const flipDurationMs = 100;
 </script>
 
 <section
-    use:dndzone={{ items: days, type: "days", dragDisabled }}
+	use:dragHandleZone={{ items: days, flipDurationMs }}
     on:consider={handleDndConsider}
     on:finalize={handleDndFinalize}
 >
     {#each days as day, dayIndex (day.id)}
-        <div class="mb-6 p-4 border rounded-lg">
+        <div class="mb-6 p-4 border rounded-lg" animate:flip="{{ duration: flipDurationMs }}">
             <div class="flex items-center justify-between mb-2">
-                <h3 class="text-lg font-semibold border-bottom">Day {dayIndex + 1}</h3>
+                <h3 class="flex text-lg font-semibold border-bottom" use:dragHandle><GripVertical/> Day {dayIndex + 1}</h3>
                 <div class="flex space-x-2">
                     <Button
                         variant="outline"
