@@ -46,3 +46,12 @@ export const flyAndScale = (
 		easing: cubicOut
 	};
 };
+
+export const moveArrayItem = (arr, fromIndex, toIndex) => {
+	if (fromIndex < 0 || fromIndex >= arr.length || toIndex < 0 || toIndex >= arr.length || fromIndex === toIndex) {
+			return arr;
+	}
+	const item = arr.splice(fromIndex, 1)[0]; // Remove item and return the removed item
+	arr.splice(toIndex, 0, item);
+	return arr;
+}
