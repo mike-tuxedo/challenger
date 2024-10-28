@@ -16,7 +16,14 @@
 	import { fade } from "svelte/transition";
 	import { flip } from 'svelte/animate';
 	import { moveArrayItem } from "$lib/utils.js";
-	
+    import { onMount } from "svelte";
+
+  import { polyfill } from 'mobile-drag-drop';
+  
+	onMount(() => {
+        polyfill();
+    });
+
 	let initialExercise = {
         name: "",
         modus: "reps",
