@@ -1,15 +1,15 @@
 <script>
 	import { Slider as SliderPrimitive } from "bits-ui";
 	import { cn } from "$lib/utils.js";
-	/** @type {{Record<string, any>}} */
-	let { class: className = undefined, value = $bindable([0]), ...rest } = $props();
-	
+	let className = undefined;
+	export let value = [0];
+	export { className as class };
 </script>
 
 <SliderPrimitive.Root
 	bind:value
 	class={cn("relative flex w-full touch-none select-none items-center", className)}
-	{...rest}
+	{...$$restProps}
 	let:thumbs
 >
 	<span class="bg-secondary relative h-2 w-full grow overflow-hidden rounded-full">

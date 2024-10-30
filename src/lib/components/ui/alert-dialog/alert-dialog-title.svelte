@@ -1,11 +1,11 @@
 <script>
 	import { AlertDialog as AlertDialogPrimitive } from "bits-ui";
 	import { cn } from "$lib/utils.js";
-	/** @type {{Record<string, any>}} */
-	let { class: className = undefined, level = "h3", children, ...rest } = $props();
-	
+	let className = undefined;
+	export let level = "h3";
+	export { className as class };
 </script>
 
-<AlertDialogPrimitive.Title class={cn("text-lg font-semibold", className)} {level} {...rest}>
-	{@render children?.()}
+<AlertDialogPrimitive.Title class={cn("text-lg font-semibold", className)} {level} {...$$restProps}>
+	<slot />
 </AlertDialogPrimitive.Title>

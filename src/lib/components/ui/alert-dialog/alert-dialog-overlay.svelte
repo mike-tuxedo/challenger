@@ -2,16 +2,17 @@
 	import { AlertDialog as AlertDialogPrimitive } from "bits-ui";
 	import { fade } from "svelte/transition";
 	import { cn } from "$lib/utils.js";
-	/** @type {{Record<string, any>}} */
-	let { class: className = undefined, transition = fade, transitionConfig = {
+	let className = undefined;
+	export let transition = fade;
+	export let transitionConfig = {
 		duration: 150,
-	}, ...rest } = $props();
-	
+	};
+	export { className as class };
 </script>
 
 <AlertDialogPrimitive.Overlay
 	{transition}
 	{transitionConfig}
 	class={cn("bg-background/80 fixed inset-0 z-50 backdrop-blur-sm ", className)}
-	{...rest}
+	{...$$restProps}
 />

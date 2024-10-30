@@ -5,9 +5,9 @@
 	import { cn } from "$lib/utils";
 
 	/** @type {{value?: any, multiplier?: number, interval?: number}} */
-	let { value = $bindable(null), multiplier = 10, interval = 1 } = $props();
+	let { value = $bindable(null), multiplier = 10, interval = 1, initialOpen = false } = $props();
 	let customNumber = $state("");
-	let dialogOpen = $state(false);
+	let dialogOpen = $state(initialOpen);
 
 	const predefinedNumbers = Array.from({ length: multiplier }, (_, i) => (i + 1) * interval);
 
