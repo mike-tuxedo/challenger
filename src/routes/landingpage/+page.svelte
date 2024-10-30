@@ -1,4 +1,4 @@
-<script lang="ts">
+<script>
 	import { Button } from "$lib/components/ui/button";
 	import { Shield, Share2, Download, DollarSign, Github, User, Dumbbell, Target, Users, Sun, Moon } from "lucide-svelte";;
 	import { Toggle } from "$lib/components/ui/toggle";
