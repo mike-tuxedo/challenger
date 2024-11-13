@@ -23,6 +23,7 @@
         DialogTitle,
         DialogTrigger,
     } from "$lib/components/ui/dialog";
+    import { empty } from "$lib/utils.js";
 
     let activeChallenges = liveQuery(() => db.activeChallenges.toArray());
 
@@ -54,7 +55,7 @@
     <h1 class="headline">Active Challenge</h1>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 flex-grow" style="min-height: calc(100vh - 252px);">
-        {#if $activeChallenges}
+        {#if empty($activeChallenges)}
             {#each $activeChallenges as activeChallenge, index}
                 <Card class>
                     <CardHeader>

@@ -55,3 +55,7 @@ export const moveArrayItem = (arr, fromIndex, toIndex) => {
 	arr.splice(toIndex, 0, item);
 	return arr;
 }
+
+export const empty = (variable) => {
+	return typeof variable === 'undefined' || variable === null || (Array.isArray(variable) && variable.length === 0 || variable === '');
+}
