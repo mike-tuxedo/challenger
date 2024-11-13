@@ -48,7 +48,7 @@
 	"dependencies": {
 		"@sveltejs/adapter-static": "^3.0.5",
 		"clsx": "^2.1.1",
-		"dexie": "^4.0.8",
+		"dexie": "^4.0.9",
 		"dexie-cloud-addon": "^4.0.8",
 		"lucide-svelte": "^0.441.0",
 		"mode-watcher": "^0.4.1",

@@ -16,15 +16,7 @@
         TooltipTrigger,
     } from "$lib/components/ui/tooltip";
     import { Dialog, DialogContent } from "$lib/components/ui/dialog";
-    import {
-        Drawer,
-        DrawerContent,
-        DrawerDescription,
-        DrawerHeader,
-        DrawerTitle,
-        DrawerTrigger,
-    } from "$lib/components/ui/drawer";
-    import { appstate } from "$lib/store";
+    import { appstate } from "$lib/store.svelte.js";
 
     import ChallengeDashboard from "$lib/components/dashboard.svelte";
     import ChallengeEditor from "$lib/components/challengetype-editor.svelte";
@@ -72,44 +64,19 @@
             </div>
         </div>
     </header>
-
-    <main class="grid overflow-hidden" style="min-height: calc(100vh - 57px)">
+    <main class="grid overflow-hidden" style="min-height: calc(100vh - 56px)">
         <!-- Content will be injected here based on the active tab -->
-        {#if $appstate.activeView === "dashboard" || $appstate.activeView === "challenge"}
-            <div
-                class="h-full w-full overflow-auto p-6"
-                style="grid-area: 1/1"
-                transition:scale|global={{ duration: 250, start: 0.9 }}
-            >
-                <ChallengeDashboard />
-            </div>
-        {:else if $appstate.activeView === "challenges"}
-            <div
-                class="h-full w-full overflow-auto p-6"
-                style="grid-area: 1/1"
-                transition:scale|global={{ duration: 250, start: 0.9 }}
-            >
-                <ChallengesOverview />
-            </div>
-        {:else if $appstate.activeView === "add"}
-            <div
-                class="grid h-full w-full overflow-auto p-6"
-                style="grid-area: 1/1"
-                transition:scale|global={{ duration: 250, start: 0.9 }}
-            >
-                <ChallengeEditor />
-            </div>
-        {:else if $appstate.activeView === "user"}
-            <div
-                class="h-full w-full overflow-auto p-6"
-                style="grid-area: 1/1"
-                transition:scale|global={{ duration: 250, start: 0.9 }}
-            >
-                <ChallengeUserpage />
-            </div>
+        {#if appstate.activeView === "dashboard" || appstate.activeView === "challenge"}
+            <ChallengeDashboard />
+        {:else if appstate.activeView === "challenges"}
+            <ChallengesOverview />
+        {:else if appstate.activeView === "add"}
+            <ChallengeEditor />
+        {:else if appstate.activeView === "user"}
+            <ChallengeUserpage />
         {/if}
 
-        <Dialog open={$appstate.activeView === "challenge"}>
+        <Dialog open={appstate.activeView === "challenge"}>
             <DialogContent class="max-w-full h-screen flex flex-col">
                 <Challenge />
             </DialogContent>
@@ -119,41 +86,41 @@
     <nav class="">
         <div class="flex justify-around">
             <Button
-                class="flex-1 rounded-none h-14 flex flex-col items-center bg-background hover:bg-background {$appstate.activeView ===
+                class="flex-1 rounded-none h-14 flex flex-col items-center bg-background hover:bg-background {appstate.activeView ===
                 'dashboard'
                     ? 'text-accent'
                     : 'text-primary'}"
-                onclick={() => ($appstate.activeView = "dashboard")}
+                onclick={() => (appstate.activeView = "dashboard")}
             >
                 <Layout class="h-6 w-6 mb-1 min-w-[24px] min-h-[24px]" />
                 <span class="text-xs">Dashboard</span>
             </Button>
             <Button
-                class="flex-1 rounded-none h-14 flex flex-col items-center bg-background hover:bg-background {$appstate.activeView ===
+                class="flex-1 rounded-none h-14 flex flex-col items-center bg-background hover:bg-background {appstate.activeView ===
                 'challenges'
                     ? 'text-accent'
                     : 'text-primary'}"
-                onclick={() => ($appstate.activeView = "challenges")}
+                onclick={() => (appstate.activeView = "challenges")}
             >
                 <Dumbbell class="h-6 w-6 mb-1 min-w-[24px] min-h-[24px]" />
                 <span class="text-xs">Challenges</span>
             </Button>
             <Button
-                class="flex-1 rounded-none h-14 flex flex-col items-center bg-background bg-background hover:bg-background {$appstate.activeView ===
+                class="flex-1 rounded-none h-14 flex flex-col items-center bg-background bg-background hover:bg-background {appstate.activeView ===
                 'add'
                     ? 'text-accent'
                     : 'text-primary'}"
-                onclick={() => ($appstate.activeView = "add")}
+                onclick={() => (appstate.activeView = "add")}
             >
                 <Plus class="h-6 w-6 mb-1 min-w-[24px] min-h-[24px]" />
                 <span class="text-xs">Add</span>
             </Button>
             <Button
-                class="flex-1 rounded-none h-14 flex flex-col items-center bg-background hover:bg-background {$appstate.activeView ===
+                class="flex-1 rounded-none h-14 flex flex-col items-center bg-background hover:bg-background {appstate.activeView ===
                 'user'
                     ? 'text-accent'
                     : 'text-primary'}"
-                onclick={() => ($appstate.activeView = "user")}
+                onclick={() => (appstate.activeView = "user")}
             >
                 <Settings class="h-6 w-6 mb-1 min-w-[24px] min-h-[24px]" />
                 <span class="text-xs">Settings</span>

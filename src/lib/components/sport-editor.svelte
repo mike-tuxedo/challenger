@@ -2,30 +2,12 @@
     import { Button } from "$lib/components/ui/button";
     import { Input } from "$lib/components/ui/input";
     import { Label } from "$lib/components/ui/label";
-    import {
-        Table,
-        TableBody,
-        TableCell,
-        TableHead,
-        TableHeader,
-        TableRow,
-    } from "$lib/components/ui/table";
-    import {
-        Trash2,
-        Copy,
-        Share2,
-        Plus,
-        Save,
-        Pencil,
-        ArrowRight,
-    } from "lucide-svelte";
-    import { RadioGroup, RadioGroupItem } from "$lib/components/ui/radio-group";
-    import NumbersInput from "$lib/components/ui/NumbersInput.svelte";
+    import { ArrowRight } from "lucide-svelte";
     import { Slider } from "$lib/components/ui/slider";
     import { Textarea } from "$lib/components/ui/textarea";
     import SportEditorDays from "$lib/components/sport-editor-days.svelte";
     import { db } from "$lib/db";
-    import { appstate } from "$lib/store.js";
+    import { appstate } from "$lib/store.svelte.js";
     import { fly, scale } from "svelte/transition";
 
     let initialExercise = {
@@ -48,8 +30,6 @@
         day: 1,
     };
     let editingIndex = $state(null);
-    let draggedIndex = $state(null);
-    let dropIndicatorIndex = $state(null);
     let exercisesEditor = $state(false);
 
     /** @type {{selectedType: any}} */
@@ -67,8 +47,8 @@
         timesADaytamp: Date.now(),
     });
 
-    if ($appstate.editingChallenge) {
-        challenge = $appstate.editingChallenge;
+    if (appstate.editingChallenge) {
+        challenge = appstate.editingChallenge;
     }
 
     async function saveChallenge() {
@@ -85,13 +65,13 @@
             await db.activeChallenges.add({
                 ...currentChallenge,
                 originId: id,
-                user: $appstate.userId,
+                user: appstate.userId,
             });
         }
 
         selectedType = null;
-        $appstate.editingChallenge = null;
-        $appstate.activeView = "challenges";
+        appstate.editingChallenge = null;
+        appstate.activeView = "challenges";
     }
 
     function addOrUpdateExercise() {
@@ -154,26 +134,23 @@
 </script>
 
 {#if !exercisesEditor}
-    <div
-        style="grid-area: 1/1; max-width: calc(100vw - 3rem)"
-        transition:scale|global={{ duration: 250, start: 0.9 }}
-    >
+    <div class="page flex flex-col" transition:scale|global={{ duration: 250, start: 0.9 }}>
         <h1 class="text-3xl font-bold mb-6">Create your challenge</h1>
 
-        <div class="self-stretch">
+        <div class="flex-grow">
             <Input
                 type="text"
                 placeholder="Give Your Challenge a Name"
-                class="text-xl"
+                class="text-sm"
                 bind:value={challenge.name}
             />
             <Textarea
                 type="text"
                 placeholder="Describe your Challenge (optional)"
-                class="text-xl mt-6"
+                class="text-sm mt-6"
                 bind:value={challenge.description}
             />
-            <h2 class="text-1xl mt-6">
+            <h2 class="text-2xl mt-6">
                 How difficult will your challenge become?
             </h2>
             <div class="py-4">
@@ -220,35 +197,9 @@
             </Button>
         </div>
     </div>
-    <!-- <Separator class="my-4" /> -->
 {:else}
-    <div
-        style="grid-area: 1/1; max-width: calc(100vw - 3rem)"
-        transition:fly|global={{ x: 100 }}
-    >
-        <h1 class="text-3xl font-bold mb-4">Add Exercises</h1>
-        <SportEditorDays />
-        <Button
-            variant="ghost"
-            class="justify-start"
-            onclick={() => { exercisesEditor = false; showNewVersion = false; }}
-        >
-            <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                class="mr-2"
-            >
-                <path d="m12 19-7-7 7-7" />
-                <path d="M19 12H5" />
-            </svg>
-            Back
-        </Button>
+    <div class="page flex flex-col" transition:fly|global={{ x: 100 }}>
+        <h1 class="headline">Add Exercises</h1>
+        <SportEditorDays goBack={() => exercisesEditor = false}/>
     </div>
 {/if}

@@ -10,7 +10,7 @@
     import { Switch } from "$lib/components/ui/switch";
     import { onDestroy } from "svelte";
     import { ArrowLeft, Pause, Play, Check } from "lucide-svelte";
-    import { appstate } from "$lib/store";
+    import { appstate } from "$lib/store.svelte.js";
     import { slide, fly } from "svelte/transition";
     import { db } from "$lib/db";
     import { liveQuery } from "dexie";
@@ -25,7 +25,7 @@
     let exerciseInterval;
 
     let currentChallenge = liveQuery(() =>
-        db.activeChallenges.get($appstate.currentChallengeId)
+        db.activeChallenges.get(appstate.currentChallengeId)
     );
 
     let exercisesOfTheDay = $derived.by(() => {
@@ -135,17 +135,17 @@
 
     async function finishDay() {
         //TODO in der currentChallenge kann man Tage auslassen. Muss man wahrscheinlich im currentChallengeeditor ändern
-        await db.activeChallenges.update($appstate.currentChallengeId, {
+        await db.activeChallenges.update(appstate.currentChallengeId, {
             currentDay: $currentChallenge.currentDay + 1,
         });
         // allSetsCompleted = false;
         console.log(allSetsCompleted);
-        $appstate.activeView = "dashboard";
+        appstate.activeView = "dashboard";
     }
 
     async function back() {
-        $appstate.currentChallengeId = null;
-        $appstate.activeView = "dashboard";
+        appstate.currentChallengeId = null;
+        appstate.activeView = "dashboard";
     }
 
     onDestroy(() => {

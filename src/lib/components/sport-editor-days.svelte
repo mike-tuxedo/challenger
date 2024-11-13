@@ -15,9 +15,9 @@
     import { Plus, Copy, GripVertical, Trash2, Pencil } from "lucide-svelte";
     import { flip } from "svelte/animate";
     import { moveArrayItem } from "$lib/utils.js";
-    import DragDropTouch from "$lib/DragDropTouch.js";
     import { v4 as uuidv4 } from "uuid";
 
+    let { goBack } = $props();
     let initialExercise = {
         name: "",
         modus: "reps",
@@ -129,7 +129,7 @@
     let dayNumbers = $state();
     function openDayNumberDrawer(e, dayIndex) {
         draggedDayIndex = dayIndex;
-        dayNumbers = Array.from({ length: days.length }, (_, i) => (i) * 1);
+        dayNumbers = Array.from({ length: days.length }, (_, i) => i * 1);
         isMenuDrawerOpen = true;
     }
 
@@ -139,11 +139,11 @@
     }
 </script>
 
-<section>
+<section class="flex-grow">
     {#each days as day, dayIndex (day.id)}
         <!-- svelte-ignore a11y_no_static_element_interactions -->
         <div
-            class="mb-6 p-4 border rounded-lg itemwrapper"
+            class="mb-6 p-4 border rounded-lg itemwrapper bg-secondary"
             class:draggOver={draggOverDayIndex === dayIndex}
             animate:flip={{ duration: 200 }}
         >
@@ -180,15 +180,23 @@
                             <DrawerHeader>
                                 <DrawerTitle>Move Day to ...</DrawerTitle>
                             </DrawerHeader>
-                            <div class="grid grid-cols-4 gap-2 mb-4 overflow-auto">
+                            <div
+                                class="grid grid-cols-4 gap-2 mb-4 overflow-auto"
+                            >
                                 {#each dayNumbers as newIndex}
-                                    <Button variant="outline" on:click={(e) => changeDay(e, newIndex)}>
+                                    <Button
+                                        variant="outline"
+                                        on:click={(e) => changeDay(e, newIndex)}
+                                    >
                                         {newIndex}
                                     </Button>
                                 {/each}
                             </div>
                             <DrawerFooter>
-                                <Button onclick={() => isMenuDrawerOpen = false}>Cancel</Button>
+                                <Button
+                                    onclick={() => (isMenuDrawerOpen = false)}
+                                    >Cancel</Button
+                                >
                             </DrawerFooter>
                         </DrawerContent>
                     </Drawer>
@@ -267,9 +275,33 @@
     {/each}
 </section>
 
-<Button onclick={addDay} class="w-full">
-    <Plus class="h-4 w-4 mr-2" /> Add Day
-</Button>
+<div class="flex justify-between">
+    <Button
+        variant="ghost"
+        class="justify-start"
+        onclick={goBack}
+    >
+        <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="mr-2"
+        >
+            <path d="m12 19-7-7 7-7" />
+            <path d="M19 12H5" />
+        </svg>
+        Back
+    </Button>
+    <Button onclick={addDay} class="justify-end">
+        <Plus class="h-4 w-4 mr-2" /> Add Day
+    </Button>
+</div>
 
 <Drawer bind:open={isDrawerOpen}>
     <DrawerContent>

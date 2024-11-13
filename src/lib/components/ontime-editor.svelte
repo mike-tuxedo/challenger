@@ -7,7 +7,6 @@
 	import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "$lib/components/ui/dialog";
 	import { Slider } from "$lib/components/ui/slider";
 	import { Textarea } from "$lib/components/ui/textarea";
-    import { goto } from "$app/navigation";
 
 	let challenge = $state({ name: "", description: "" });
 	let isCreated = $state(false);

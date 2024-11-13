@@ -79,4 +79,20 @@
     @apply bg-background text-foreground;
     background-image: radial-gradient(circle at 80% 120%, rgb(0 245 255), rgb(0 255 0 / 0%) 53%);
   }
+  .page {
+    min-height: calc(100vh - 56px);
+    grid-area: 1/1;
+    @apply h-full;
+    @apply w-full;
+    @apply overflow-auto;
+    @apply p-6;
+  }
+  .headline {
+    @apply text-3xl;
+    @apply font-bold;
+    @apply mb-8;
+  }
+  .content {
+    min-height: calc(100vh - 172px);
+  }
 }
