@@ -38,8 +38,28 @@
         TabsList,
         TabsTrigger,
     } from "$lib/components/ui/tabs";
+	import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "$lib/components/ui/select";
+	import { Label } from "$lib/components/ui/label";
     import { db } from "$lib/db";
     import { appstate } from "$lib/store.svelte.js";
+
+	let difficultyFilter = "";
+	let typeFilter = "";
+
+	const difficultyOptions = [
+		{ value: "", label: "All Difficulties" },
+		{ value: "never", label: "Nie" },
+		{ value: "occasional", label: "Gelegentlich" },
+		{ value: "regular", label: "Regelmäßig" },
+		{ value: "pro", label: "Profilevel" },
+	];
+
+	const typeOptions = [
+		{ value: "", label: "All Types" },
+		{ value: "sport", label: "Sport" },
+		{ value: "habit", label: "Habit" },
+		{ value: "one-time", label: "One-Time" },
+	];
 
     let selectedChallenge = null;
     let copiedChallenge = null;
@@ -164,6 +184,36 @@
             </TabsList>
         </Tabs>
     </div>
+
+    <div class="flex flex-col sm:flex-row gap-4">
+		<div class="w-full sm:w-1/2">
+			<Label for="difficulty-filter">Wie oft treibst du Sport?</Label>
+			<Select value={difficultyFilter} onValueChange={(value) => (difficultyFilter = value)}>
+				<SelectTrigger id="difficulty-filter">
+					<SelectValue placeholder="Wähle eine Häufigkeit" />
+				</SelectTrigger>
+				<SelectContent>
+					{#each difficultyOptions as option}
+						<SelectItem value={option.value}>{option.label}</SelectItem>
+					{/each}
+				</SelectContent>
+			</Select>
+		</div>
+
+		<div class="w-full sm:w-1/2">
+			<Label for="type-filter">Challenge-Typ</Label>
+			<Select value={typeFilter} onValueChange={(value) => (typeFilter = value)}>
+				<SelectTrigger id="type-filter">
+					<SelectValue placeholder="Wähle einen Typ" />
+				</SelectTrigger>
+				<SelectContent>
+					{#each typeOptions as option}
+						<SelectItem value={option.value}>{option.label}</SelectItem>
+					{/each}
+				</SelectContent>
+			</Select>
+		</div>
+	</div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {#if challenges}

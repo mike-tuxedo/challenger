@@ -34,7 +34,8 @@
 </script>
 
 <div class="flex flex-col h-screen">
-    <header class="absolute z-10 p-4 right-0">
+    {#if appstate.activeView === "dashboard" || appstate.activeView === "challenge"}
+    <header class="absolute z-10 p-4 right-3 top-2">
         <div class="flex justify-end">
             <div class="flex items-center space-x-2">
                 <Tooltip>
@@ -44,14 +45,14 @@
                             size="icon"
                             onclick={shareChallenge}
                         >
-                            <Share2 class="h-5 w-5" />
+                            <Share2 class="h-6 w-6" />
                         </Button>
                     </TooltipTrigger>
                     <TooltipContent>
                         <p>Share</p>
                     </TooltipContent>
                 </Tooltip>
-                <Tooltip>
+                <!-- <Tooltip>
                     <TooltipTrigger>
                         <Button variant="ghost" size="icon" onclick={showInfo}>
                             <CircleAlert class="h-5 w-5" />
@@ -60,10 +61,11 @@
                     <TooltipContent>
                         <p>Info</p>
                     </TooltipContent>
-                </Tooltip>
+                </Tooltip> -->
             </div>
         </div>
     </header>
+    {/if}
     <main class="grid overflow-hidden" style="min-height: calc(100vh - 56px)">
         <!-- Content will be injected here based on the active tab -->
         {#if appstate.activeView === "dashboard" || appstate.activeView === "challenge"}
